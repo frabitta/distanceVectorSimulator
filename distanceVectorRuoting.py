@@ -24,8 +24,8 @@ class Network:
             node2 (str): addr of the second node
             weight (int): weight of the edge
         """
-        self.nodes[node1].neightbour(node2, weight)
-        self.nodes[node2].neightbour(node1, weight)
+        self.nodes[node1].neighbour(node2, weight)
+        self.nodes[node2].neighbour(node1, weight)
         self.nodes[node1].sendDV()
         self.nodes[node2].sendDV()
         present, tuple = self.usedTuple(node1, node2)
@@ -79,8 +79,8 @@ class Node:
         self.routing_table[self.addr] = (0, self.addr)
         print("NODE: ", self.addr, " - created")
     
-    def neightbour(self, node: str, weight):
-        """Updates a neightbour connection
+    def neighbour(self, node: str, weight):
+        """Updates a neighbour connection
 
         Args:
             node (str): node to discover
@@ -140,7 +140,7 @@ class Node:
         """
         current_rt = self.routing_table.copy()
         for addr, (weight, next_hop) in current_rt.items():
-            # if is a neightbour
+            # if is a neighbour
             if addr != self.addr and addr == next_hop:
                 print("NODE: ", self.addr, " - sends DV to ", addr)
                 self.net.transmit(self.addr, addr, self.splitHorizon(addr))
