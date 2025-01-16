@@ -110,8 +110,7 @@ class Node:
                         self.routing_table[addr] = (new_distance, hop)
                         updated = True
                     # if is known we update it
-                    else:
-                        if new_distance < self.routing_table[addr][0]:
+                    elif new_distance < self.routing_table[addr][0]:
                             self.routing_table[addr] = (new_distance, hop)
                             updated = True
         if updated:
@@ -160,18 +159,18 @@ class Node:
 if __name__ == "__main__":
     net = Network()
     
-    net.add_node("Ra")
-    net.add_node("Rb")
-    net.add_node("Rc")
-    net.add_node("Rd")
+    net.add_node("R1")
+    net.add_node("R2")
+    net.add_node("R3")
+    net.add_node("R4")
 
-    net.add_edge("Ra", "Rb", 8)
-    net.add_edge("Rb", "Rc", 4)
-    net.add_edge("Rc", "Rd", 21)
-    net.add_edge("Ra", "Rd", 3)
+    net.add_edge("R1", "R2", 8)
+    net.add_edge("R2", "R3", 4)
+    net.add_edge("R3", "R4", 21)
+    net.add_edge("R1", "R4", 3)
     net.print_tables()
     
     print("\n")
     # edge cost change test
-    net.add_edge("Rc", "Rd", 1) # modifies an existing edge if it exists
+    net.add_edge("R3", "R4", 1) # modifies an existing edge if it exists
     net.print_tables()
