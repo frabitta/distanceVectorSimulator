@@ -87,7 +87,14 @@ class Node:
             weight (int): weight of the edge
         """
         if node != self.addr:
-            print("NODE: ", self.addr, " - has a new neighbour ", node, " with weight ", weight)
+            if node in self.routing_table and self.routing_table[node][1] == node:
+                print("EDGE: ", self.addr, " - ", node, " updating with ", weight)
+                current_edgeWeight = self.routing_table[node][0]
+                for addr, (current_routeWeight, next_hop) in self.routing_table.items():
+                    if next_hop == node:
+                        self.routing_table[addr] = (current_routeWeight - current_edgeWeight + weight , node)
+            else:
+                print("NODE: ", self.addr, " - has a new neighbour ", node, " with weight ", weight)
             self.routing_table[node] = (weight, node)
             """
             I send the DV via the newtwork because we need to have the connection established
@@ -173,4 +180,7 @@ if __name__ == "__main__":
     print("\n")
     # edge cost change test
     net.add_edge("R3", "R4", 1) # modifies an existing edge if it exists
+    net.print_tables()
+
+    net.add_edge("R3", "R4", 3) # modifies an existing edge if it exists
     net.print_tables()
