@@ -24,10 +24,13 @@ class Network:
             node2 (str): addr of the second node
             weight (int): weight of the edge
         """
+        # Creates a connection
         self.nodes[node1].neighbour(node2, weight)
         self.nodes[node2].neighbour(node1, weight)
+        # Sends the DV to the neighbours
         self.nodes[node1].sendDV()
         self.nodes[node2].sendDV()
+        # Updates the edge
         present, tuple = self.usedTuple(node1, node2)
         if present:
             self.edges[tuple] = weight
@@ -36,7 +39,8 @@ class Network:
     
     def usedTuple(self, node1: str, node2: str):
         """
-        Returns the tuple used to store the edge between node1 and node2, if present"""
+        Returns the tuple used to store the edge between node1 and node2, if present
+        """
         if (node1, node2) in self.edges:
             return True, (node1, node2)
         else:
@@ -87,9 +91,11 @@ class Node:
             weight (int): weight of the edge
         """
         if node != self.addr:
+            # if the connection already exists
             if node in self.routing_table and self.routing_table[node][1] == node:
                 print("EDGE: ", self.addr, " - ", node, " updating with ", weight)
                 current_edgeWeight = self.routing_table[node][0]
+                # I update the routes that use it
                 for addr, (current_routeWeight, next_hop) in self.routing_table.items():
                     if next_hop == node:
                         self.routing_table[addr] = (current_routeWeight - current_edgeWeight + weight , node)
@@ -112,11 +118,11 @@ class Node:
             for addr, (weight, next_hop) in dv.items():
                 if addr != self.addr:
                     new_distance = weight + self.routing_table[hop][0]
-                    # if is unknow we add it
+                    # if it's unknow we add it
                     if addr not in self.routing_table:
                         self.routing_table[addr] = (new_distance, hop)
                         updated = True
-                    # if is known we update it
+                    # if it's known we update it
                     elif new_distance < self.routing_table[addr][0]:
                             self.routing_table[addr] = (new_distance, hop)
                             updated = True
@@ -157,6 +163,7 @@ class Node:
         """
         routing_table_mod = dict()
         for dst, (weight, next_hop) in self.routing_table.items():
+            # if the route goes through the node that is receiving my Distance Vector
             if next_hop == addr:
                 weight = float("inf")
             routing_table_mod[dst] = (weight, next_hop)
@@ -165,19 +172,18 @@ class Node:
 
 if __name__ == "__main__":
     net = Network()
-    
+    # nodes creation
     net.add_node("R1")
     net.add_node("R2")
     net.add_node("R3")
     net.add_node("R4")
-
+    # edges creation
     net.add_edge("R1", "R2", 8)
     net.add_edge("R2", "R3", 4)
     net.add_edge("R3", "R4", 21)
     net.add_edge("R1", "R4", 3)
     net.print_tables()
-    
+    # update of an edge
     print("\n")
-    # edge cost change test
     net.add_edge("R3", "R4", 1) # modifies an existing edge if it exists
     net.print_tables()
