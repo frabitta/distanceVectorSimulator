@@ -137,7 +137,25 @@ class Node:
             # if is a neightbour
             if addr != self.addr and addr == next_hop:
                 print("NODE: ", self.addr, " - sends DV to ", addr)
-                self.net.transmit(self.addr, addr, self.routing_table)
+                self.net.transmit(self.addr, addr, self.splitHorizon(addr))
+
+    def splitHorizon(self, addr: str):
+        """Returns the routing table with split horizon applied
+            (the routes traversed through the neighbour are removed: weight=inf)
+
+        Args:
+            addr (str): addr of the neighbour to which the DV is being sent
+
+        Returns:
+            dict: the routing table with split horizon applied
+        """
+        routing_table_mod = dict()
+        for dst, (weight, next_hop) in self.routing_table.items():
+            if next_hop == addr:
+                weight = float("inf")
+            routing_table_mod[dst] = (weight, next_hop)
+        return routing_table_mod
+
 
 if __name__ == "__main__":
     net = Network()
